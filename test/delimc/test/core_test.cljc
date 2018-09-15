@@ -571,5 +571,3 @@
 (deftest ref-1
   (is (= @(reset (ref {}))
          @(ref {}))))
-
-
