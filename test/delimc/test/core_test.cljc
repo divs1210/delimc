@@ -1,4 +1,4 @@
-(ns delimc.test.core
+(ns delimc.core-test
   (:use [delimc.core] :reload)
   (:use [clojure.test]))
 
