@@ -58,13 +58,24 @@
     :clj-compiler))
 
 #?(:clj
-(defmethod transform :default [acons k-expr]
-  (let [expansion (clojure.core/macroexpand-1 acons)
-        expanded-p (expanded? acons expansion)]
-    (if expanded-p
-      (expr->cps expansion k-expr)
-      (funcall->cps
-       (cons `(~'function ~(first expansion)) (rest expansion)) k-expr nil)))))
+   (defmethod transform :default [acons k-expr]
+     (let [expansion
+           (if (= :clj-compiler (current-compiler))
+             (macroexpand-1 acons)
+             ;; letfn environment masking doesn't work because of lein reloading.
+             ;; So, when local functions are defined, just pass them without calling
+             ;; macroexpand-1.
+             (if (some #{(first acons)} (:local-functions *ctx*))
+               acons
+               ;; use clojure.core/macroexpand-1 instead of analyze/macroexpand-1 which
+               ;; expands the macros like +, -, *, /., i.e. what is (or will be) defined 
+               ;; as a macro in clojurescript but as a function in clojure.
+               (clojure.core/macroexpand-1 acons)))
+           expanded-p (expanded? acons expansion)]
+       (if expanded-p
+         (expr->cps expansion k-expr)
+         (funcall->cps
+          (cons `(~'function ~(first expansion)) (rest expansion)) k-expr nil)))))
 
 (defn apply->cps [acons k-expr args]
   (application->cps `apply-cc acons k-expr args))
