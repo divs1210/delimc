@@ -6,3 +6,4 @@ classes
 target
 .cpcache/
 resources
+cljs-test-runner-out
