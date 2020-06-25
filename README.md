@@ -1,9 +1,11 @@
-delimc
-----
+# delimc
 
-A delimited continuations library for Clojure 1.4.0 (and 1.3.0). Portions based on cl-cont by Slava Akhmechet (http://defmacro.org).
+A delimited continuations library for Clojure/Script.
+Portions based on cl-cont by Slava Akhmechet (http://defmacro.org).
 
-```clj
+## Usage
+
+```clojure
 (def cont1 (atom nil))
 (def cont2 (atom nil))
 (def cont3 (atom nil))
@@ -37,35 +39,21 @@ A delimited continuations library for Clojure 1.4.0 (and 1.3.0). Portions based 
 (@cont4 ", yesterday was ") ; "Hello, yesterday was a nice day"
 ```
 
-Test
-----
+## Test
 
-To test for clojure by Leiningen:
+### Clojure
 
 ```
 $ lein test
 ```
 
-To test for clojurescript by Leiningen:
+### ClojureScript
 
 ```
 $ lein cljs-test
 ```
 
-To test for clojure by Clojure CLI:
-
-```
-$ clj -A:test
-```
-
-To test for clojurescript by Clojure CLI:
-
-```
-$ clj -A:cljs-test
-```
-
-References
-----
+## References
 
 * [Literate Engines in Lisp](http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.45.6198)
 * [Threads Yield Continuations](http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.41.4786)
