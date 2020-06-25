@@ -26,7 +26,7 @@
                        {:id "test"
                         :source-paths ["src" "test"]
                         :compiler
-                        {:main delimc.test.core-test
+                        {:main delimc.core-test
                          :output-to "resources/private/js/cljs-test.js"
                          :output-dir "resources/private/js/out"
                          :target :nodejs

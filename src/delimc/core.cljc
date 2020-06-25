@@ -86,7 +86,7 @@
     (if expanded-p
       (expr->cps expansion k-expr)
       (funcall->cps
-       (cons `(~'function ~(first expansion)) (rest expansion)) k-expr nil)))))
+       (cons `(function ~(first expansion)) (rest expansion)) k-expr nil)))))
 
 (defn apply->cps [acons k-expr args]
   (application->cps `apply-cc acons k-expr args))
