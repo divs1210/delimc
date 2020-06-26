@@ -236,14 +236,12 @@
 ;; ================================================================================
 ;; Helper Transformers
 ;; ================================================================================
+#?(:clj
 (defmethod transform :reset [acons k-expr]
-  (transform (macroexpand-1 acons) k-expr))
+  (transform (macroexpand-1 acons) k-expr)))
 
-(defmacro unreset [& body]
-  `(do ~@body))
-
-(defmethod transform :unreset [cons k-expr]
-  `(~k-expr (do ~@(rest cons))))
+(defmethod transform :unreset [acons k-expr]
+  `(~k-expr (do ~@(rest acons))))
 
 (defmethod transform :defn [[_ name args & body] k-expr]
   `(do
@@ -260,6 +258,9 @@
 (defmacro reset [& body]
   (binding [*ctx* (Context. nil)]
     (expr-sequence->cps body `identity)))
+
+(defmacro unreset [& body]
+  `(do ~@body))
 
 (defmacro fn-cc [args-list & body]
   `(reset
