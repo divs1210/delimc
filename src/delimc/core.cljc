@@ -62,26 +62,32 @@
 (defn full-qualify [[op & args :as acons]]
   (cond
     (and (= op 'shift) (nil? (namespace op)))
-      (cons 'delimc.core/shift (rest acons))
+    (cons 'delimc.core/shift (rest acons))
+
     (and (= op 'if-let) (nil? (namespace op)) )
-      (cons 'clojure.core/if-let (rest acons))
+    (cons 'clojure.core/if-let (rest acons))
+
     :else
-      acons)))
+    acons)))
 
 #?(:clj
 (defmethod transform :default [acons k-expr]
   (let [expansion
-        (if (= :clj-compiler (current-compiler))
+        (cond
+          (= :clj-compiler (current-compiler))
           (macroexpand-1 acons)
+
           ;; letfn environment masking doesn't work because of lein reloading.
           ;; So, when local functions are defined, just pass them without calling
           ;; macroexpand-1.
-          (if (some #{(first acons)} (:local-functions *ctx*))
-            acons
-            ;; use clojure.core/macroexpand-1 instead of analyze/macroexpand-1 which
-            ;; expands the macros like +, -, *, /., i.e. what is (or will be) defined 
-            ;; as a macro in clojurescript but as a function in clojure.
-            (clojure.core/macroexpand-1 (full-qualify acons))))
+          (some #{(first acons)} (:local-functions *ctx*))
+          acons
+
+          ;; use clojure.core/macroexpand-1 instead of analyze/macroexpand-1 which
+          ;; expands the macros like +, -, *, /., i.e. what is (or will be) defined 
+          ;; as a macro in clojurescript but as a function in clojure.
+          :else
+          (clojure.core/macroexpand-1 (full-qualify acons)))
         expanded-p (expanded? acons expansion)]
     (if expanded-p
       (expr->cps expansion k-expr)
@@ -230,9 +236,8 @@
 ;; ================================================================================
 ;; Helper Transformers
 ;; ================================================================================
-
-(defmethod transform :reset [cons k-expr]
-  (transform (macroexpand-1 cons) k-expr))
+(defmethod transform :reset [acons k-expr]
+  (transform (macroexpand-1 acons) k-expr))
 
 (defmacro unreset [& body]
   `(do ~@body))
